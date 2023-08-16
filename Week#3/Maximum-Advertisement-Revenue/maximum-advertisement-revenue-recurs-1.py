@@ -8,7 +8,7 @@ def maxIndex(someList):
     return max_index
 
 
-def maxProduct(n, prices, clicks):
+def dotProduct(n, prices, clicks):
     if n == 0:
         return 0
     max_index_prices = maxIndex(prices)
@@ -17,10 +17,10 @@ def maxProduct(n, prices, clicks):
     prices[max_index_prices] = 0
     clicks[max_index_clicks] = 0
     n -= 1
-    return product + maxProduct(n, prices, clicks)
+    return product + dotProduct(n, prices, clicks)
 
 
 n = int(input())
 prices = list(map(int, input().split()[:n]))
 clicks = list(map(int, input().split()[:n]))
-print(maxProduct(n, prices, clicks))
+print(dotProduct(n, prices, clicks))

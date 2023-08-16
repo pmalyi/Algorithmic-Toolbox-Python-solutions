@@ -1,4 +1,4 @@
-def maxProduct(n, prices, clicks):
+def dotProduct(n, prices, clicks):
     if n == 0:
         return 0
     max_prices = max(prices)
@@ -7,10 +7,10 @@ def maxProduct(n, prices, clicks):
     prices.remove(max_prices)
     clicks.remove(max_clicks)
     n -= 1
-    return product + maxProduct(n, prices, clicks)
+    return product + dotProduct(n, prices, clicks)
 
 
 n = int(input())
 prices = list(map(int, input().split()[:n]))
 clicks = list(map(int, input().split()[:n]))
-print(maxProduct(n, prices, clicks))
+print(dotProduct(n, prices, clicks))
