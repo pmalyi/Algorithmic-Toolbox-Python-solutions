@@ -42,6 +42,4 @@ def stressTest():
 
 
 stressTest()
-# num1, num2 = map(str, input().split())
-# print(karatsuba(num1, num2))
-# print(int(num1) * int(num2))
+
