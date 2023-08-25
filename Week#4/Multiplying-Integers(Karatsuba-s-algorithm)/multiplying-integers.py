@@ -20,7 +20,6 @@ def karatsuba(X, Y):
     P = karatsuba(A, C) # A * C
     Q = karatsuba(str(int(A) + int(B)), str(int(C) + int(D)))  # (A + B) * (C + D)
     R = karatsuba(B, D) # B * D
-
     return 10 ** (mid_pow * 2) * P + 10 ** mid_pow * (Q - P - R) + R
 
 
