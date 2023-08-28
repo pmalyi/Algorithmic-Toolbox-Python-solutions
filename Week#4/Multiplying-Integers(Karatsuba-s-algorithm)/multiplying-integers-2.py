@@ -1,26 +1,18 @@
 from math import ceil
 def karatsuba(X, Y):
-    n = max(len(X), len(Y))
-    if n <= 1:
+    if len(X) == 1 or len(Y) == 1:
         return int(X) * int(Y)
-    mid_pow = ceil(n / 2)
-    mid_split = n // 2
-    if len(X) == n:
-        A = X[:mid_split]
-        B = X[mid_split:]
-        Y = (len(X) - len(Y)) * '0' + Y
-        C = Y[:mid_split]
-        D = Y[mid_split:]
-    else:
-        X = (len(Y) - len(X)) * '0' + X
-        A = X[:mid_split]
-        B = X[mid_split:]
-        C = Y[:mid_split]
-        D = Y[mid_split:]
+    n = max(len(X), len(Y))
+    # mid_pow = ceil(n / 2)
+    middle = n // 2
+    A = X[:-middle]
+    B = X[-middle:]
+    C = Y[:-middle]
+    D = Y[-middle:]
     P = karatsuba(A, C) # A * C
     Q = karatsuba(str(int(A) + int(B)), str(int(C) + int(D)))  # (A + B) * (C + D)
     R = karatsuba(B, D) # B * D
-    return 10 ** (mid_pow * 2) * P + 10 ** mid_pow * (Q - P - R) + R
+    return 10 ** (middle * 2) * P + 10 ** middle * (Q - P - R) + R
 
 
 def stressTest():
