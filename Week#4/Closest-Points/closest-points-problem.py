@@ -16,20 +16,27 @@ def getMinDistance(Points, low, high):
     dist1 = getMinDistance(Points, low, mid)
     dist2 = getMinDistance(Points, mid + 1, high)
     dist = min(dist1, dist2)
-    '''left = mid
-    right = mid
+    if (high - low) % 2 != 0:
+        rmid = mid + 1
+    else:
+        rmid = mid
+    left = mid
+    right = rmid
     while left >= low:
         if Points[mid][0] - Points[left][0] - sqrt(dist) < 0.001:
             left -= 1
         else:
             break
+    if left < low:
+        left = low
     while right <= high:
-        if Points[right][0] - Points[mid][0] - sqrt(dist) < 0.001:
+        if Points[right][0] - Points[rmid][0] - sqrt(dist) < 0.001:
             right += 1
         else:
             break
-    Strip = Points[left:right]'''
-    Strip = Points[low:high]
+    if right > high:
+        right = high
+    Strip = Points[left:right + 1]
     Strip.sort(key=lambda X: X[1])
     for p in range(len(Strip) - 1):
         q = p + 1
@@ -44,7 +51,7 @@ def getMinDistance(Points, low, high):
 
 n = int(input())
 points = [tuple(map(int, input().split())) for i in range(n)]
-'''with open('input.txt', 'r', encoding='utf-8') as inF:
+'''with open('input1.txt', 'r', encoding='utf-8') as inF:
     n = int(inF.readline())
     points = [tuple(map(int, inF.readline().split())) for i in range(n)]'''
 points.sort()
