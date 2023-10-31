@@ -24,9 +24,9 @@ n, W = map(int, input().split())
 w = tuple(map(int, input().split()))
 v = tuple(map(int, input().split()))
 res1, res2 = knapsackWithRep(n, W, w, v)
-print(res1)
+print(f'${res1}')
 for i in res2:
-    print(v[i], end=' ')
+    print(f'${v[i]}', end=' ')
 print()
 for i in res2:
-    print(w[i], end=' ')
+    print(f'{w[i]}kg', end=' ')
