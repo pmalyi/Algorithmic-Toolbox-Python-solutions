@@ -3,14 +3,14 @@ def knapsackWithRep(n, W, w, v):
     value = [0] * (W + 1)
     prev = [-1] * (W + 1)
     TakeItem = [-1] * (W + 1)
-    for sw in range(1, W + 1):
+    for u in range(1, W + 1):
         for i in range(n):
-            if w[i] <= sw:
-                val = value[sw - w[i]] + v[i]
-                if val > value[sw]:
-                    value[sw] = val
-                    prev[sw] = sw - w[i]
-                    TakeItem[sw] = i
+            if w[i] <= u:
+                val = value[u - w[i]] + v[i]
+                if val > value[u]:
+                    value[u] = val
+                    prev[u] = u - w[i]
+                    TakeItem[u] = i
     tracing = []
     current = W
     while current > 0:
