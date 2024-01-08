@@ -1,3 +1,4 @@
+# не проходить усі тести
 def solve(A, W, n):
     T = [[0] * (W + 1) for _ in range(n + 1)]
     count = 0
