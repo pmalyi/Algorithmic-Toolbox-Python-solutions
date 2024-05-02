@@ -11,8 +11,6 @@ def carFueling(d, m, gasStations):
     num_fueling = 0 # Кількість заправок автомобіля
     while d > m:
         current = gasStationSearch(current, fueling, n, gasStations)  # оптимальний "жадібний" вибір
-        '''while current < n - 1 and gasStations[current + 1] - fueling <= m:
-            current += 1'''
         if gasStations[current] == fueling: # не вдалося знайти АЗС відстань до якої не перевищує m
             return -1
         dist_fueling = gasStations[current] - fueling # дистанція, яку проїхав автомобіль, не заправляючись
