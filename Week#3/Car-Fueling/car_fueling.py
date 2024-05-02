@@ -1,15 +1,16 @@
 def carFueling(d, m, gasStations):
     n = len(gasStations)
     current = 0 # current - номер поточної АЗС
-    fuelinf = gasStations[current] # відстань на шляху, де відбулась заправка автомобіля
+    fueling = gasStations[current] # відстань на шляху, де відбулась заправка автомобіля
     num_fueling = 0 # Кількість заправок автомобіля
     while d > m:
-        while current < n - 1 and gasStations[current + 1] - fuelinf <= m:
+        while current < n - 1 and gasStations[current + 1] - fueling <= m:
             current += 1
-        if gasStations[current] == fuelinf:
+        if gasStations[current] == fueling:
             return -1
-        dist_fueling = gasStations[current] - fuelinf # дистанція, яку проїхав автомобіль, не заправляючись
+        dist_fueling = gasStations[current] - fueling # дистанція, яку проїхав автомобіль, не заправляючись
         d -= dist_fueling
+        fueling = gasStations[current]
         num_fueling += 1
     return num_fueling
 
