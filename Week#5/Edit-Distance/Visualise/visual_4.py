@@ -1,0 +1,121 @@
+import matplotlib.pyplot as plt
+from matplotlib.widgets import Button, TextBox
+import numpy as np
+
+
+class LevenshteinVisualizer:
+    def __init__(self, word1="horse", word2="ros"):
+        self.setup_data(word1, word2)
+        self.create_ui()
+
+    def setup_data(self, w1_raw, w2_raw):
+        self.w1 = "#" + w1_raw
+        self.w2 = "#" + w2_raw
+        self.n, self.m = len(self.w1), len(self.w2)
+        self.dp = np.zeros((self.n, self.m))
+        self.mask = np.zeros((self.n, self.m), dtype=bool)
+        self.current_step = 0
+        self.history = []  # Для зберігання текстових пояснень
+
+    def create_ui(self):
+        # Збільшуємо вікно, щоб вмістити панель пояснень праворуч
+        self.fig = plt.figure(figsize=(15, 10))
+        self.ax = plt.subplot2grid((10, 15), (0, 0), colspan=10, rowspan=8)
+        self.ax_info = plt.subplot2grid((10, 15), (0, 11), colspan=4, rowspan=8)
+        self.ax_info.axis('off')
+
+        plt.subplots_adjust(bottom=0.25, left=0.1, right=0.95)
+
+        # Поля для введення
+        self.text_box1 = TextBox(plt.axes([0.15, 0.1, 0.15, 0.04]), 'Word 1: ', initial=self.w1[1:])
+        self.text_box2 = TextBox(plt.axes([0.4, 0.1, 0.15, 0.04]), 'Word 2: ', initial=self.w2[1:])
+
+        # Кнопки
+        self.btn_next = Button(plt.axes([0.65, 0.1, 0.1, 0.04]), 'NEXT STEP', color='lightgreen')
+        self.btn_next.on_clicked(self.next_step)
+
+        self.btn_reset = Button(plt.axes([0.77, 0.1, 0.1, 0.04]), 'RESET', color='tomato')
+        self.btn_reset.on_clicked(self.reset)
+
+        self.update_plot()
+        plt.show()
+
+    def update_plot(self):
+        self.ax.clear()
+        self.ax_info.clear()
+        self.ax_info.axis('off')
+
+        i, j = divmod(self.current_step, self.m)
+        self.mask[i, j] = True
+
+        char1, char2 = self.w1[i], self.w2[j]
+        explanation = ""
+
+        # Обчислення та формування логічного пояснення
+        if i == 0 and j == 0:
+            self.dp[i, j] = 0
+            explanation = "Старт: обидва рядки порожні.\nВартість = 0."
+        elif i == 0:
+            self.dp[i, j] = j
+            explanation = f"Базовий регістр:\nПеретворюємо '' в '{self.w2[1:j + 1]}'.\nОперація: Вставка '{char2}'.\nСума: {j}"
+        elif j == 0:
+            self.dp[i, j] = i
+            explanation = f"Базовий регістр:\nПеретворюємо '{self.w1[1:i + 1]}' в ''.\nОперація: Видалення '{char1}'.\nСума: {i}"
+        else:
+            cost = 0 if char1 == char2 else 1
+            left = self.dp[i, j - 1] + 1  # Ins
+            top = self.dp[i - 1, j] + 1  # Del
+            diag = self.dp[i - 1, j - 1] + cost  # Rep/Match
+
+            res = min(left, top, diag)
+            self.dp[i, j] = res
+
+            if char1 == char2:
+                explanation = f"Символи '{char1}' та '{char2}' ОДНАКОВІ.\nБеремо значення по діагоналі (↖).\nНічого не додаємо.\nРезультат: {int(diag)}"
+            else:
+                op_name = ""
+                if res == diag:
+                    op_name = f"Заміна '{char1}' на '{char2}' (↖)"
+                elif res == top:
+                    op_name = f"Видалення '{char1}' (↑)"
+                else:
+                    op_name = f"Вставка '{char2}' (←)"
+
+                explanation = f"Символи '{char1}' та '{char2}' РІЗНІ.\nОбираємо мінімум з:\n- Вставка (←): {int(left)}\n- Видалення (↑): {int(top)}\n- Заміна (↖): {int(diag)}\n\nРішення: {op_name}"
+
+        # Візуалізація таблиці
+        self.ax.matshow(np.ones_like(self.dp), cmap="bone", alpha=0.05)
+        for r in range(self.n):
+            for c in range(self.m):
+                if self.mask[r, c]:
+                    is_curr = (r == i and c == j)
+                    self.ax.text(c, r, f"{int(self.dp[r, c])}", va='center', ha='center',
+                                 fontsize=22, color="red" if is_curr else "black",
+                                 fontweight='bold' if is_curr else 'normal')
+
+        # Оформлення
+        self.ax.set_xticks(range(self.m))
+        self.ax.set_xticklabels(list(self.w2), fontsize=24, fontweight='bold')
+        self.ax.set_yticks(range(self.n))
+        self.ax.set_yticklabels(list(self.w1), fontsize=24, fontweight='bold')
+
+        # Текст пояснення на правій панелі
+        self.ax_info.text(0, 0.9, "ЛОГІКА КРОКУ:", fontsize=16, fontweight='bold', color='darkred')
+        self.ax_info.text(0, 0.5, explanation, fontsize=14, va='center', linespacing=1.5,
+                          bbox=dict(facecolor='wheat', alpha=0.3, boxstyle='round,pad=1'))
+
+        self.ax.set_title(f"Крок {self.current_step + 1}: Порівняння префіксів", fontsize=18, pad=20)
+        plt.draw()
+
+    def next_step(self, event):
+        if self.current_step < (self.n * self.m - 1):
+            self.current_step += 1
+            self.update_plot()
+
+    def reset(self, event):
+        self.setup_data(self.text_box1.text, self.text_box2.text)
+        self.update_plot()
+
+
+if __name__ == "__main__":
+    LevenshteinVisualizer()
